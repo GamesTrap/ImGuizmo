@@ -820,7 +820,7 @@ namespace IMGUIZMO_NAMESPACE
       const float moy = (1.f - ((io.MousePos.y - position.y) / size.y)) * 2.f - 1.f;
 
       const float zNear = gContext.mReversed ? (1.f - FLT_EPSILON) : 0.f;
-      const float zFar = gContext.mReversed ? 0.f : (1.f - FLT_EPSILON);
+      const float zFar = gContext.mReversed ? 0.1f : (1.f - FLT_EPSILON); //For reversed-z, use z = 0.1 for the far plance since the actual far plane may be at infinity
 
       rayOrigin.Transform(makeVect(mox, moy, zNear, 1.f), mViewProjInverse);
       rayOrigin *= 1.f / rayOrigin.w;
@@ -1069,8 +1069,8 @@ namespace IMGUIZMO_NAMESPACE
       gContext.mCameraUp = viewInverse.v.up;
 
       // projection reverse
-      if(gContext.mProjectionMat.m[2][2] == -1.0f) //Support infinite far plane
-         gContext.mReversed = false;
+      if(gContext.mProjectionMat.m[2][2] == -1.0f || gContext.mProjectionMat.m[2][2] == 0.0f) //Support infinite far plane (and optionally reversed depth range)
+         gContext.mReversed = true;
       else
       {
          vec_t nearPos, farPos;
